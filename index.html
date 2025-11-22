@@ -1,0 +1,1267 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>勉強用webサイト</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            height: calc(100vh - 40px);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        
+        /* ポイント表示（左上） */
+        .points-display {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
+            border: 2px solid #3b82f6;
+            border-radius: 15px;
+            padding: 15px 25px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5), 0 0 20px rgba(59, 130, 246, 0.3);
+            z-index: 900;
+        }
+        
+        .points-display .label {
+            font-size: 0.8em;
+            color: #60a5fa;
+            margin-bottom: 5px;
+            text-align: center;
+        }
+        
+        .points-display .value {
+            font-size: 1.8em;
+            color: #3b82f6;
+            font-weight: bold;
+            text-align: center;
+            text-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+        }
+        
+        /* メニューボタン */
+        .menu-button {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
+            border: 2px solid #3b82f6;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5), 0 0 20px rgba(59, 130, 246, 0.3);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .menu-button span {
+            width: 25px;
+            height: 3px;
+            background: #60a5fa;
+            border-radius: 2px;
+            box-shadow: 0 0 5px rgba(59, 130, 246, 0.5);
+        }
+        
+        .menu-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 15px rgba(59, 130, 246, 0.5), 0 0 30px rgba(59, 130, 246, 0.4);
+            background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+        }
+        
+        .menu-button:active {
+            transform: scale(0.95);
+        }
+        
+        .menu-button.active {
+            animation: menu-pulse 0.3s ease-out;
+        }
+        
+        @keyframes menu-pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.2);
+                box-shadow: 0 6px 20px rgba(59, 130, 246, 0.6), 0 0 40px rgba(59, 130, 246, 0.5);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+        
+        /* ドロップダウンメニュー */
+        .dropdown-menu {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background: linear-gradient(135deg, #1a1f3a 0%, #0f1729 100%);
+            border: 2px solid #2d3561;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 0 20px rgba(59, 130, 246, 0.2);
+            z-index: 999;
+            display: none;
+            overflow: hidden;
+        }
+        
+        .dropdown-menu button {
+            display: block;
+            width: 200px;
+            padding: 15px 20px;
+            border: none;
+            background: transparent;
+            text-align: left;
+            cursor: pointer;
+            font-size: 1em;
+            border-bottom: 1px solid #2d3561;
+            transition: all 0.2s ease;
+            position: relative;
+            color: #60a5fa;
+        }
+        
+        .dropdown-menu button::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 0;
+            background: linear-gradient(90deg, #3b82f6, transparent);
+            transition: width 0.3s ease;
+        }
+        
+        .dropdown-menu button:hover::before {
+            width: 5px;
+        }
+        
+        .dropdown-menu button:last-child {
+            border-bottom: none;
+        }
+        
+        .dropdown-menu button:hover {
+            background: rgba(59, 130, 246, 0.1);
+            padding-left: 25px;
+            color: #93c5fd;
+        }
+        
+        .dropdown-menu button:active {
+            background: rgba(59, 130, 246, 0.2);
+            transform: scale(0.98);
+        }
+        
+        /* トグルスイッチ */
+        .toggle-switch {
+            width: 50px;
+            height: 26px;
+            background: #1e293b;
+            border: 2px solid #2d3561;
+            border-radius: 13px;
+            position: relative;
+            transition: all 0.3s;
+        }
+        
+        .toggle-switch.active {
+            background: #1e40af;
+            border-color: #3b82f6;
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+        }
+        
+        .toggle-slider {
+            width: 22px;
+            height: 22px;
+            background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+            border-radius: 50%;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.3s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3), 0 0 10px rgba(59, 130, 246, 0.3);
+        }
+        
+        .toggle-slider.active {
+            transform: translateX(24px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3), 0 0 15px rgba(59, 130, 246, 0.6);
+        }
+        
+        /* 画面 */
+        .screen {
+            display: none;
+            background: linear-gradient(135deg, #1a1f3a 0%, #0f1729 100%);
+            border: 2px solid #2d3561;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 20px rgba(59, 130, 246, 0.3);
+            padding: 40px;
+            flex: 1;
+            overflow-y: auto;
+        }
+        
+        .screen.active {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* タイトル */
+        h1 {
+            text-align: center;
+            color: #3b82f6;
+            margin-bottom: 40px;
+            font-size: 2.5em;
+            text-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+        }
+        
+        /* ボタンリスト */
+        .button-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            max-width: 600px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        
+        .main-button {
+            padding: 20px 30px;
+            font-size: 1.3em;
+            border: 2px solid #3b82f6;
+            border-radius: 10px;
+            cursor: pointer;
+            background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
+            color: #60a5fa;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3), 0 0 20px rgba(59, 130, 246, 0.2);
+            position: relative;
+            overflow: hidden;
+            font-weight: bold;
+        }
+        
+        .main-button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(59, 130, 246, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+        
+        .main-button:active::before {
+            width: 300px;
+            height: 300px;
+        }
+        
+        .main-button:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 12px 30px rgba(59, 130, 246, 0.4), 0 0 30px rgba(59, 130, 246, 0.3);
+            background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+            color: #93c5fd;
+            border-color: #60a5fa;
+        }
+        
+        .main-button:active {
+            transform: translateY(-2px) scale(0.98);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        
+        /* クイズ画面 */
+        .quiz-container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        
+        .question-area {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #0f1729 0%, #1a1f3a 100%);
+            border: 2px solid #2d3561;
+            border-radius: 15px;
+            padding: 40px;
+            margin-bottom: 30px;
+            min-height: 300px;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.3), 0 0 20px rgba(59, 130, 246, 0.1);
+        }
+        
+        .question-text {
+            font-size: 1.8em;
+            color: #93c5fd;
+            text-align: center;
+            line-height: 1.6;
+            text-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
+        }
+        
+        .answer-area {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .answer-button {
+            flex: 1;
+            min-width: 200px;
+            padding: 20px;
+            font-size: 1.2em;
+            border: 3px solid #3b82f6;
+            border-radius: 10px;
+            cursor: pointer;
+            background: linear-gradient(135deg, #1e3a8a 0%, #1e293b 100%);
+            color: #60a5fa;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: bold;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3), 0 0 15px rgba(59, 130, 246, 0.2);
+        }
+        
+        .answer-button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(59, 130, 246, 0.2);
+            transform: translate(-50%, -50%);
+            transition: width 0.5s, height 0.5s;
+        }
+        
+        .answer-button:active::before {
+            width: 400px;
+            height: 400px;
+        }
+        
+        .answer-button:hover {
+            background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+            color: #93c5fd;
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4), 0 0 30px rgba(59, 130, 246, 0.3);
+            border-color: #60a5fa;
+        }
+        
+        .answer-button:active {
+            transform: scale(0.95);
+        }
+        
+        .answer-button.clicked {
+            animation: answer-click 0.4s ease-out;
+        }
+        
+        @keyframes answer-click {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(0.9);
+                background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+                border-color: #3b82f6;
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+        
+        /* 結果画面 */
+        .result-container {
+            text-align: center;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .result-score {
+            font-size: 5em;
+            color: #3b82f6;
+            font-weight: bold;
+            margin: 30px 0;
+            text-shadow: 0 0 30px rgba(59, 130, 246, 0.5);
+        }
+        
+        .result-animation {
+            width: 200px;
+            height: 200px;
+            margin: 20px auto;
+            position: relative;
+        }
+        
+        /* 完璧アニメーション - 花火 */
+        .firework {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+        
+        .firework-particle {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            animation: explode 1.5s ease-out infinite;
+        }
+        
+        .firework-particle:nth-child(1) { background: #ff6b6b; animation-delay: 0s; transform: rotate(0deg); }
+        .firework-particle:nth-child(2) { background: #4ecdc4; animation-delay: 0.1s; transform: rotate(45deg); }
+        .firework-particle:nth-child(3) { background: #ffe66d; animation-delay: 0.2s; transform: rotate(90deg); }
+        .firework-particle:nth-child(4) { background: #95e1d3; animation-delay: 0.3s; transform: rotate(135deg); }
+        .firework-particle:nth-child(5) { background: #ff8b94; animation-delay: 0.4s; transform: rotate(180deg); }
+        .firework-particle:nth-child(6) { background: #a8e6cf; animation-delay: 0.5s; transform: rotate(225deg); }
+        .firework-particle:nth-child(7) { background: #ffd3b6; animation-delay: 0.6s; transform: rotate(270deg); }
+        .firework-particle:nth-child(8) { background: #ffaaa5; animation-delay: 0.7s; transform: rotate(315deg); }
+        
+        @keyframes explode {
+            0% {
+                transform: translate(-50%, -50%) translateY(0) scale(0);
+                opacity: 1;
+            }
+            50% {
+                opacity: 1;
+            }
+            100% {
+                transform: translate(-50%, -50%) translateY(-80px) scale(1);
+                opacity: 0;
+            }
+        }
+        
+        /* 素晴らしいアニメーション - 星 */
+        .stars {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+        
+        .star {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            animation: twinkle 1.5s ease-in-out infinite;
+        }
+        
+        .star:nth-child(1) { top: 20%; left: 50%; animation-delay: 0s; }
+        .star:nth-child(2) { top: 40%; left: 20%; animation-delay: 0.3s; }
+        .star:nth-child(3) { top: 40%; left: 80%; animation-delay: 0.6s; }
+        .star:nth-child(4) { top: 70%; left: 35%; animation-delay: 0.9s; }
+        .star:nth-child(5) { top: 70%; left: 65%; animation-delay: 1.2s; }
+        
+        .star::before,
+        .star::after {
+            content: '';
+            position: absolute;
+            background: #ffd700;
+            top: 50%;
+            left: 50%;
+        }
+        
+        .star::before {
+            width: 40px;
+            height: 8px;
+            transform: translate(-50%, -50%);
+        }
+        
+        .star::after {
+            width: 8px;
+            height: 40px;
+            transform: translate(-50%, -50%);
+        }
+        
+        @keyframes twinkle {
+            0%, 100% {
+                transform: scale(0.8) rotate(0deg);
+                opacity: 0.6;
+            }
+            50% {
+                transform: scale(1.2) rotate(180deg);
+                opacity: 1;
+            }
+        }
+        
+        /* 良くできましたアニメーション - いいねサムズアップ */
+        .thumbs-up {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .thumb {
+            width: 100px;
+            height: 120px;
+            background: #667eea;
+            border-radius: 20px 20px 50px 50px;
+            position: relative;
+            animation: bounce 0.8s ease-in-out infinite;
+        }
+        
+        .thumb::before {
+            content: '';
+            position: absolute;
+            width: 60px;
+            height: 40px;
+            background: #667eea;
+            border-radius: 20px 20px 0 0;
+            top: -30px;
+            left: 20px;
+            transform: rotate(-45deg);
+        }
+        
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0) scale(1);
+            }
+            50% {
+                transform: translateY(-20px) scale(1.1);
+            }
+        }
+        
+        /* もう少し頑張りましょうアニメーション - 筋肉 */
+        .muscle {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+        
+        .arm {
+            width: 80px;
+            height: 100px;
+            background: #ff9a9e;
+            border-radius: 40px;
+            position: relative;
+            animation: flex 1s ease-in-out infinite;
+        }
+        
+        .bicep {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background: #ff6b6b;
+            border-radius: 50%;
+            top: 20px;
+            left: 15px;
+            animation: grow 1s ease-in-out infinite;
+        }
+        
+        @keyframes flex {
+            0%, 100% {
+                transform: rotate(-20deg);
+            }
+            50% {
+                transform: rotate(-40deg);
+            }
+        }
+        
+        @keyframes grow {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.3);
+            }
+        }
+        
+        /* ポイント獲得アニメーション */
+        .point-notification {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
+            border: 3px solid #3b82f6;
+            border-radius: 20px;
+            padding: 30px 50px;
+            font-size: 2em;
+            color: #60a5fa;
+            font-weight: bold;
+            z-index: 2000;
+            box-shadow: 0 10px 40px rgba(59, 130, 246, 0.5), 0 0 60px rgba(59, 130, 246, 0.4);
+            animation: point-popup 1s ease-out;
+            pointer-events: none;
+            display: none;
+        }
+        
+        @keyframes point-popup {
+            0% {
+                transform: translate(-50%, -50%) scale(0);
+                opacity: 0;
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.2);
+                opacity: 1;
+            }
+            70% {
+                transform: translate(-50%, -50%) scale(1);
+            }
+            100% {
+                transform: translate(-50%, -80%) scale(0.8);
+                opacity: 0;
+            }
+        }
+        
+        .result-buttons {
+            display: flex;
+            gap: 20px;
+            margin-top: 40px;
+        }
+        
+        .result-button {
+            padding: 15px 40px;
+            font-size: 1.2em;
+            border: 2px solid #3b82f6;
+            border-radius: 10px;
+            cursor: pointer;
+            background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
+            color: #60a5fa;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3), 0 0 15px rgba(59, 130, 246, 0.2);
+        }
+        
+        .result-button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(59, 130, 246, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+        
+        .result-button:active::before {
+            width: 300px;
+            height: 300px;
+        }
+        
+        .result-button:hover {
+            background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4), 0 0 30px rgba(59, 130, 246, 0.3);
+            color: #93c5fd;
+            border-color: #60a5fa;
+        }
+        
+        .result-button:active {
+            transform: translateY(-2px) scale(0.98);
+        }
+        
+        .progress-info {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.2em;
+            color: #60a5fa;
+            text-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
+        }
+        
+        /* モバイルモード */
+        body.mobile-mode .container {
+            padding: 0;
+        }
+        
+        body.mobile-mode .screen {
+            border-radius: 0;
+            padding: 20px;
+            height: 100vh;
+        }
+        
+        body.mobile-mode .question-area {
+            padding: 20px;
+            min-height: 200px;
+        }
+        
+        body.mobile-mode .question-text {
+            font-size: 1.3em;
+        }
+        
+        body.mobile-mode .answer-area {
+            flex-direction: column;
+        }
+        
+        body.mobile-mode .answer-button {
+            min-width: 100%;
+            font-size: 1em;
+        }
+        
+        body.mobile-mode .main-button {
+            font-size: 1.1em;
+            padding: 15px 20px;
+        }
+        
+        body.mobile-mode h1 {
+            font-size: 1.8em;
+        }
+        
+        body.mobile-mode .result-score {
+            font-size: 3.5em;
+        }
+        
+        body.mobile-mode .result-buttons {
+            flex-direction: column;
+            width: 100%;
+        }
+        
+        body.mobile-mode .result-button {
+            width: 100%;
+        }
+        
+        body.mobile-mode .points-display {
+            top: 10px;
+            left: 10px;
+            padding: 10px 20px;
+        }
+        
+        body.mobile-mode .points-display .label {
+            font-size: 0.7em;
+        }
+        
+        body.mobile-mode .points-display .value {
+            font-size: 1.5em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- ポイント表示（左上） -->
+        <div class="points-display">
+            <div class="label">総ポイント</div>
+            <div class="value" id="pointsDisplayValue">0</div>
+        </div>
+        
+        <!-- メニューボタン -->
+        <button class="menu-button" id="menuButton" onclick="toggleMenu()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+        
+        <!-- ドロップダウンメニュー -->
+        <div class="dropdown-menu" id="dropdownMenu">
+            <div style="padding: 15px 20px; background: rgba(59, 130, 246, 0.1); border-bottom: 2px solid #2d3561;">
+                <div style="text-align: center;">
+                    <div style="font-size: 0.9em; color: #60a5fa; margin-bottom: 5px;">総ポイント</div>
+                    <div style="font-size: 1.8em; color: #3b82f6; font-weight: bold; text-shadow: 0 0 15px rgba(59, 130, 246, 0.5);" id="totalPoints">0</div>
+                </div>
+            </div>
+            <button onclick="goToMainMenu()" id="menuToMain">メニュー画面に戻る</button>
+            <button onclick="goToSubjectMenu()" id="menuToSubject">科目選択に戻る</button>
+            <button onclick="skipQuestion()" id="menuSkip">この問題をスキップ</button>
+            <div style="padding: 15px 20px; border-top: 2px solid #2d3561;">
+                <label style="display: flex; align-items: center; justify-content: space-between; cursor: pointer;">
+                    <span style="font-weight: bold; color: #3b82f6; text-shadow: 0 0 10px rgba(59, 130, 246, 0.3);">表示モード</span>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <span id="modeLabel" style="font-size: 0.9em; color: #60a5fa;">PC</span>
+                        <div class="toggle-switch" onclick="toggleMode(event)">
+                            <div class="toggle-slider" id="toggleSlider"></div>
+                        </div>
+                    </div>
+                </label>
+            </div>
+        </div>
+        
+        <!-- メイン画面 (教科選択) -->
+        <div class="screen active" id="mainScreen">
+            <h1>📚 勉強用webサイト</h1>
+            <div class="button-list" id="subjectList"></div>
+        </div>
+        
+        <!-- 科目選択画面 -->
+        <div class="screen" id="topicScreen">
+            <h1 id="topicTitle">科目選択</h1>
+            <div class="button-list" id="topicList"></div>
+        </div>
+        
+        <!-- クイズ画面 -->
+        <div class="screen" id="quizScreen">
+            <div class="quiz-container">
+                <div class="progress-info" id="progressInfo"></div>
+                <div class="question-area">
+                    <div class="question-text" id="questionText"></div>
+                </div>
+                <div class="answer-area" id="answerArea"></div>
+            </div>
+        </div>
+        
+        <!-- 結果画面 -->
+        <div class="screen" id="resultScreen">
+            <div class="result-container">
+                <h1>結果発表</h1>
+                <div class="result-animation" id="resultAnimation"></div>
+                <div class="result-score" id="resultScore"></div>
+                <p id="resultMessage" style="font-size: 1.5em; color: #60a5fa; text-shadow: 0 0 10px rgba(59, 130, 246, 0.3);"></p>
+                <div class="result-buttons">
+                    <button class="result-button" onclick="retryQuiz()">もう一度</button>
+                    <button class="result-button" onclick="goToMainMenu()">メニュー画面へ</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // データ構造
+        const quizData = {
+            "数学": {
+                "算数": [
+                    {
+                        question: "2 + 2 = ?",
+                        answers: ["3", "4", "5", "6"],
+                        correct: 1
+                    },
+                    {
+                        question: "10 × 5 = ?",
+                        answers: ["50", "40", "60", "55"],
+                        correct: 0
+                    },
+                    {
+                        question: "100 ÷ 4 = ?",
+                        answers: ["20", "25", "30", "35"],
+                        correct: 1
+                    }
+                ],
+                "代数": [
+                    {
+                        question: "x + 5 = 10 のとき、x = ?",
+                        answers: ["3", "4", "5", "6"],
+                        correct: 2
+                    },
+                    {
+                        question: "2x = 8 のとき、x = ?",
+                        answers: ["2", "4", "6", "8"],
+                        correct: 1
+                    }
+                ]
+            },
+            "英語": {
+                "単語": [
+                    {
+                        question: "「こんにちは」を英語で言うと?",
+                        answers: ["Goodbye", "Hello", "Thank you", "Sorry"],
+                        correct: 1
+                    },
+                    {
+                        question: "「犬」を英語で言うと?",
+                        answers: ["Cat", "Dog", "Bird", "Fish"],
+                        correct: 1
+                    },
+                    {
+                        question: "「学校」を英語で言うと?",
+                        answers: ["House", "Hospital", "School", "Store"],
+                        correct: 2
+                    }
+                ],
+                "文法": [
+                    {
+                        question: "I ___ a student. の空欄に入るのは?",
+                        answers: ["is", "am", "are", "be"],
+                        correct: 1
+                    },
+                    {
+                        question: "She ___ to school. の空欄に入るのは?",
+                        answers: ["go", "goes", "going", "went"],
+                        correct: 1
+                    }
+                ]
+            },
+            "理科": {
+                "化学": [
+                    {
+                        question: "水の化学式は?",
+                        answers: ["H2O", "CO2", "O2", "N2"],
+                        correct: 0
+                    },
+                    {
+                        question: "二酸化炭素の化学式は?",
+                        answers: ["H2O", "CO2", "O2", "N2"],
+                        correct: 1
+                    }
+                ],
+                "生物": [
+                    {
+                        question: "光合成を行うのは?",
+                        answers: ["動物", "植物", "菌類", "細菌"],
+                        correct: 1
+                    },
+                    {
+                        question: "人間の骨は何本?",
+                        answers: ["約200本", "約300本", "約400本", "約500本"],
+                        correct: 0
+                    }
+                ]
+            }
+        };
+        
+        // 状態管理
+        let currentSubject = "";
+        let currentTopic = "";
+        let currentQuestionIndex = 0;
+        let correctCount = 0;
+        let totalQuestions = 0;
+        let isMobileMode = false;
+        let totalPoints = 0;
+        
+        // ポイントをローカルストレージから読み込み
+        function loadPoints() {
+            const saved = localStorage.getItem('quizPoints');
+            if (saved) {
+                totalPoints = parseInt(saved);
+            }
+            updatePointsDisplay();
+        }
+        
+        // ポイントを保存
+        function savePoints() {
+            localStorage.setItem('quizPoints', totalPoints.toString());
+        }
+        
+        // ポイント表示を更新
+        function updatePointsDisplay() {
+            document.getElementById('totalPoints').textContent = totalPoints;
+            document.getElementById('pointsDisplayValue').textContent = totalPoints;
+        }
+        
+        // ポイント獲得通知
+        function showPointNotification(points) {
+            const notification = document.createElement('div');
+            notification.className = 'point-notification';
+            notification.textContent = `+${points} ポイント!`;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 1000);
+        }
+        
+        // 初期化
+        function init() {
+            const subjectList = document.getElementById("subjectList");
+            subjectList.innerHTML = "";
+            
+            Object.keys(quizData).forEach(subject => {
+                const button = document.createElement("button");
+                button.className = "main-button";
+                button.textContent = subject;
+                button.onclick = () => selectSubject(subject);
+                subjectList.appendChild(button);
+            });
+            
+            loadPoints();
+            updateMenuButtons();
+        }
+        
+        // 教科選択
+        function selectSubject(subject) {
+            currentSubject = subject;
+            showScreen("topicScreen");
+            
+            document.getElementById("topicTitle").textContent = subject + " - 科目選択";
+            const topicList = document.getElementById("topicList");
+            topicList.innerHTML = "";
+            
+            Object.keys(quizData[subject]).forEach(topic => {
+                const button = document.createElement("button");
+                button.className = "main-button";
+                button.textContent = topic;
+                button.onclick = () => selectTopic(topic);
+                topicList.appendChild(button);
+            });
+        }
+        
+        // 科目選択
+        function selectTopic(topic) {
+            currentTopic = topic;
+            currentQuestionIndex = 0;
+            correctCount = 0;
+            totalQuestions = quizData[currentSubject][currentTopic].length;
+            
+            showScreen("quizScreen");
+            updateMenuButtons();
+            showQuestion();
+        }
+        
+        // 問題表示
+        function showQuestion() {
+            const questions = quizData[currentSubject][currentTopic];
+            
+            if (currentQuestionIndex >= questions.length) {
+                showResult();
+                return;
+            }
+            
+            const question = questions[currentQuestionIndex];
+            
+            document.getElementById("progressInfo").textContent = 
+                `問題 ${currentQuestionIndex + 1} / ${totalQuestions}`;
+            document.getElementById("questionText").textContent = question.question;
+            
+            const answerArea = document.getElementById("answerArea");
+            answerArea.innerHTML = "";
+            
+            question.answers.forEach((answer, index) => {
+                const button = document.createElement("button");
+                button.className = "answer-button";
+                button.textContent = answer;
+                button.onclick = () => selectAnswer(index);
+                answerArea.appendChild(button);
+            });
+        }
+        
+        // 回答選択
+        function selectAnswer(answerIndex) {
+            const questions = quizData[currentSubject][currentTopic];
+            const question = questions[currentQuestionIndex];
+            
+            // クリックアニメーション
+            const buttons = document.querySelectorAll('.answer-button');
+            buttons[answerIndex].classList.add('clicked');
+            
+            // 正解判定とポイント加算
+            let earnedPoints = 0;
+            if (answerIndex === question.correct) {
+                correctCount++;
+                earnedPoints = 10; // 正解で10ポイント
+                totalPoints += earnedPoints;
+                savePoints();
+                updatePointsDisplay();
+                showPointNotification(earnedPoints);
+            }
+            
+            // アニメーション後に次の問題へ
+            setTimeout(() => {
+                currentQuestionIndex++;
+                showQuestion();
+            }, earnedPoints > 0 ? 1000 : 400); // 正解時は少し長く待つ
+        }
+        
+        // 問題スキップ
+        function skipQuestion() {
+            currentQuestionIndex++;
+            closeMenu();
+            showQuestion();
+        }
+        
+        // 結果表示
+        function showResult() {
+            showScreen("resultScreen");
+            updateMenuButtons();
+            
+            // ボーナスポイント計算
+            const percentage = Math.round((correctCount / totalQuestions) * 100);
+            let bonusPoints = 0;
+            
+            if (percentage === 100) {
+                bonusPoints = 50; // 完璧ボーナス
+            } else if (percentage >= 80) {
+                bonusPoints = 30; // 優秀ボーナス
+            } else if (percentage >= 60) {
+                bonusPoints = 10; // 合格ボーナス
+            }
+            
+            if (bonusPoints > 0) {
+                totalPoints += bonusPoints;
+                savePoints();
+                updatePointsDisplay();
+                
+                // ボーナスポイント通知は少し遅らせる
+                setTimeout(() => {
+                    showPointNotification(bonusPoints + ' ボーナス');
+                }, 500);
+            }
+            
+            document.getElementById("resultScore").textContent = 
+                `${correctCount} / ${totalQuestions}`;
+            
+            let message = "";
+            let animationHTML = "";
+            
+            if (percentage === 100) {
+                message = "完璧です！";
+                // 花火アニメーション
+                animationHTML = `
+                    <div class="firework">
+                        <div class="firework-particle"></div>
+                        <div class="firework-particle"></div>
+                        <div class="firework-particle"></div>
+                        <div class="firework-particle"></div>
+                        <div class="firework-particle"></div>
+                        <div class="firework-particle"></div>
+                        <div class="firework-particle"></div>
+                        <div class="firework-particle"></div>
+                    </div>
+                `;
+            } else if (percentage >= 80) {
+                message = "素晴らしい！";
+                // 星アニメーション
+                animationHTML = `
+                    <div class="stars">
+                        <div class="star"></div>
+                        <div class="star"></div>
+                        <div class="star"></div>
+                        <div class="star"></div>
+                        <div class="star"></div>
+                    </div>
+                `;
+            } else if (percentage >= 60) {
+                message = "良くできました！";
+                // サムズアップアニメーション
+                animationHTML = `
+                    <div class="thumbs-up">
+                        <div class="thumb"></div>
+                    </div>
+                `;
+            } else {
+                message = "もう少し頑張りましょう！";
+                // 筋肉アニメーション
+                animationHTML = `
+                    <div class="muscle">
+                        <div class="arm">
+                            <div class="bicep"></div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            document.getElementById("resultAnimation").innerHTML = animationHTML;
+            document.getElementById("resultMessage").textContent = message;
+        }
+        
+        // もう一度
+        function retryQuiz() {
+            currentQuestionIndex = 0;
+            correctCount = 0;
+            showScreen("quizScreen");
+            updateMenuButtons();
+            showQuestion();
+        }
+        
+        // 画面切り替え
+        function showScreen(screenId) {
+            document.querySelectorAll(".screen").forEach(screen => {
+                screen.classList.remove("active");
+            });
+            document.getElementById(screenId).classList.add("active");
+            closeMenu();
+        }
+        
+        // メニュー画面に戻る
+        function goToMainMenu() {
+            currentSubject = "";
+            currentTopic = "";
+            showScreen("mainScreen");
+            updateMenuButtons();
+        }
+        
+        // 科目選択に戻る
+        function goToSubjectMenu() {
+            if (currentSubject) {
+                selectSubject(currentSubject);
+                updateMenuButtons();
+            }
+        }
+        
+        // メニューボタンの表示制御
+        function updateMenuButtons() {
+            const activeScreen = document.querySelector('.screen.active').id;
+            const menuToMain = document.getElementById('menuToMain');
+            const menuToSubject = document.getElementById('menuToSubject');
+            const menuSkip = document.getElementById('menuSkip');
+            
+            // 各画面でのボタンの表示/非表示を制御
+            if (activeScreen === 'mainScreen') {
+                menuToMain.style.display = 'none';
+                menuToSubject.style.display = 'none';
+                menuSkip.style.display = 'none';
+            } else if (activeScreen === 'topicScreen') {
+                menuToMain.style.display = 'block';
+                menuToSubject.style.display = 'none';
+                menuSkip.style.display = 'none';
+            } else if (activeScreen === 'quizScreen') {
+                menuToMain.style.display = 'block';
+                menuToSubject.style.display = 'block';
+                menuSkip.style.display = 'block';
+            } else if (activeScreen === 'resultScreen') {
+                menuToMain.style.display = 'block';
+                menuToSubject.style.display = 'block';
+                menuSkip.style.display = 'none';
+            }
+        }
+        
+        // メニュー開閉
+        function toggleMenu() {
+            const menu = document.getElementById("dropdownMenu");
+            const menuButton = document.getElementById("menuButton");
+            
+            if (menu.style.display === "block") {
+                menu.style.display = "none";
+                menuButton.classList.remove('active');
+            } else {
+                menu.style.display = "block";
+                menuButton.classList.add('active');
+            }
+        }
+        
+        function closeMenu() {
+            document.getElementById("dropdownMenu").style.display = "none";
+            document.getElementById("menuButton").classList.remove('active');
+        }
+        
+        // モード切り替え
+        function toggleMode(event) {
+            event.stopPropagation();
+            isMobileMode = !isMobileMode;
+            
+            const body = document.body;
+            const slider = document.getElementById("toggleSlider");
+            const toggleSwitch = slider.parentElement;
+            const modeLabel = document.getElementById("modeLabel");
+            
+            if (isMobileMode) {
+                body.classList.add("mobile-mode");
+                slider.classList.add("active");
+                toggleSwitch.classList.add("active");
+                modeLabel.textContent = "Mobile";
+            } else {
+                body.classList.remove("mobile-mode");
+                slider.classList.remove("active");
+                toggleSwitch.classList.remove("active");
+                modeLabel.textContent = "PC";
+            }
+        }
+        
+        // 初期化実行
+        init();
+    </script>
+</body>
+</html>
