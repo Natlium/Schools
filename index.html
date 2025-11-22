@@ -833,95 +833,303 @@
     <script>
         // データ構造
         const quizData = {
-            "数学": {
-                "算数": [
-                    {
-                        question: "2 + 2 = ?",
-                        answers: ["3", "4", "5", "6"],
-                        correct: 1
-                    },
-                    {
-                        question: "10 × 5 = ?",
-                        answers: ["50", "40", "60", "55"],
-                        correct: 0
-                    },
-                    {
-                        question: "100 ÷ 4 = ?",
-                        answers: ["20", "25", "30", "35"],
-                        correct: 1
-                    }
-                ],
-                "代数": [
-                    {
-                        question: "x + 5 = 10 のとき、x = ?",
-                        answers: ["3", "4", "5", "6"],
-                        correct: 2
-                    },
-                    {
-                        question: "2x = 8 のとき、x = ?",
-                        answers: ["2", "4", "6", "8"],
-                        correct: 1
-                    }
-                ]
-            },
-            "英語": {
-                "単語": [
-                    {
-                        question: "「こんにちは」を英語で言うと?",
-                        answers: ["Goodbye", "Hello", "Thank you", "Sorry"],
-                        correct: 1
-                    },
-                    {
-                        question: "「犬」を英語で言うと?",
-                        answers: ["Cat", "Dog", "Bird", "Fish"],
-                        correct: 1
-                    },
-                    {
-                        question: "「学校」を英語で言うと?",
-                        answers: ["House", "Hospital", "School", "Store"],
-                        correct: 2
-                    }
-                ],
-                "文法": [
-                    {
-                        question: "I ___ a student. の空欄に入るのは?",
-                        answers: ["is", "am", "are", "be"],
-                        correct: 1
-                    },
-                    {
-                        question: "She ___ to school. の空欄に入るのは?",
-                        answers: ["go", "goes", "going", "went"],
-                        correct: 1
-                    }
-                ]
-            },
-            "理科": {
-                "化学": [
-                    {
-                        question: "水の化学式は?",
-                        answers: ["H2O", "CO2", "O2", "N2"],
-                        correct: 0
-                    },
-                    {
-                        question: "二酸化炭素の化学式は?",
-                        answers: ["H2O", "CO2", "O2", "N2"],
-                        correct: 1
-                    }
-                ],
-                "生物": [
-                    {
-                        question: "光合成を行うのは?",
-                        answers: ["動物", "植物", "菌類", "細菌"],
-                        correct: 1
-                    },
-                    {
-                        question: "人間の骨は何本?",
-                        answers: ["約200本", "約300本", "約400本", "約500本"],
-                        correct: 0
-                    }
-                ]
-            }
-        };
+  "数学": {
+    "算数": [
+      {
+        "question": "2 + 2 = ?",
+        "answers": [
+          "3",
+          "4",
+          "5",
+          "6"
+        ],
+        "correct": 1
+      },
+      {
+        "question": "10 × 5 = ?",
+        "answers": [
+          "50",
+          "40",
+          "60",
+          "55"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "100 ÷ 4 = ?",
+        "answers": [
+          "20",
+          "25",
+          "30",
+          "35"
+        ],
+        "correct": 1
+      }
+    ],
+    "代数": [
+      {
+        "question": "x + 5 = 10 のとき、x = ?",
+        "answers": [
+          "3",
+          "4",
+          "5",
+          "6"
+        ],
+        "correct": 2
+      },
+      {
+        "question": "2x = 8 のとき、x = ?",
+        "answers": [
+          "2",
+          "4",
+          "6",
+          "8"
+        ],
+        "correct": 1
+      }
+    ],
+    "乗数": [
+      {
+        "question": "2の2乗は？",
+        "answers": [
+          "4",
+          "6",
+          "9",
+          "8"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "3の2乗は？",
+        "answers": [
+          "0",
+          "6",
+          "9",
+          "2"
+        ],
+        "correct": 2
+      },
+      {
+        "question": "4の2乗は？",
+        "answers": [
+          "4",
+          "6",
+          "8",
+          "16"
+        ],
+        "correct": 3
+      }
+    ]
+  },
+  "英語": {
+    "単語": [
+      {
+        "question": "「こんにちは」を英語で言うと?",
+        "answers": [
+          "Goodbye",
+          "Hello",
+          "Thank you",
+          "Sorry"
+        ],
+        "correct": 1
+      },
+      {
+        "question": "「犬」を英語で言うと?",
+        "answers": [
+          "Cat",
+          "Dog",
+          "Bird",
+          "Fish"
+        ],
+        "correct": 1
+      },
+      {
+        "question": "「学校」を英語で言うと?",
+        "answers": [
+          "House",
+          "Hospital",
+          "School",
+          "Store"
+        ],
+        "correct": 2
+      }
+    ],
+    "文法": [
+      {
+        "question": "I ___ a student. の空欄に入るのは?",
+        "answers": [
+          "is",
+          "am",
+          "are",
+          "be"
+        ],
+        "correct": 1
+      },
+      {
+        "question": "She ___ to school. の空欄に入るのは?",
+        "answers": [
+          "go",
+          "goes",
+          "going",
+          "went"
+        ],
+        "correct": 1
+      }
+    ],
+    "test": [
+      {
+        "question": "Pollution",
+        "answers": [
+          "汚染",
+          "教育の",
+          "環境",
+          "注目"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "educational",
+        "answers": [
+          "再利用できる",
+          "教育の",
+          "環境",
+          "注目"
+        ],
+        "correct": 1
+      },
+      {
+        "question": "reusable",
+        "answers": [
+          "再利用できる",
+          "環境",
+          "注目",
+          "環境"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "attention",
+        "answers": [
+          "汚染",
+          "環境",
+          "注目",
+          "教育の"
+        ],
+        "correct": 2
+      },
+      {
+        "question": "environment",
+        "answers": [
+          "再利用できる",
+          "教育の",
+          "汚染",
+          "環境"
+        ],
+        "correct": 3
+      },
+      {
+        "question": "清掃",
+        "answers": [
+          "cleanup",
+          "awareness",
+          "campaign",
+          "destribute"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "配布する",
+        "answers": [
+          "cleanup",
+          "awareness",
+          "destribute",
+          "waste"
+        ],
+        "correct": 2
+      },
+      {
+        "question": "社会運動",
+        "answers": [
+          "waste",
+          "campaign",
+          "destribute",
+          "awareness"
+        ],
+        "correct": 1
+      },
+      {
+        "question": "意識",
+        "answers": [
+          "waste",
+          "awareness",
+          "campaign",
+          "dog"
+        ],
+        "correct": 1
+      },
+      {
+        "question": "ゴミ",
+        "answers": [
+          "waste",
+          "cleanup",
+          "destribute",
+          "awareness"
+        ],
+        "correct": 0
+      }
+    ]
+  },
+  "理科": {
+    "化学": [
+      {
+        "question": "水の化学式は?",
+        "answers": [
+          "H2O",
+          "CO2",
+          "O2",
+          "N2"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "二酸化炭素の化学式は?",
+        "answers": [
+          "H2O",
+          "CO2",
+          "O2",
+          "N2"
+        ],
+        "correct": 1
+      }
+    ],
+    "生物": [
+      {
+        "question": "光合成を行うのは?",
+        "answers": [
+          "動物",
+          "植物",
+          "菌類",
+          "細菌"
+        ],
+        "correct": 1
+      },
+      {
+        "question": "人間の骨は何本?",
+        "answers": [
+          "約200本",
+          "約300本",
+          "約400本",
+          "約500本"
+        ],
+        "correct": 0
+      }
+    ]
+  },
+  "工作": {
+    "test": []
+  },
+  "公共": {}
+};
         
         // 状態管理
         let currentSubject = "";
