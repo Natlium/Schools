@@ -16,6 +16,27 @@
             background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
             min-height: 100vh;
             padding: 20px;
+            transition: background 0.5s ease;
+        }
+        
+        /* カラーテーマ */
+        body.theme-red {
+            background: linear-gradient(135deg, #1a0a0a 0%, #2d1a1a 100%);
+        }
+        
+        body.theme-mono {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+        }
+        
+        /* アニメーション品質 */
+        body.anim-low * {
+            animation-duration: 0.1s !important;
+            transition-duration: 0.1s !important;
+        }
+        
+        body.anim-high * {
+            animation-duration: 1s !important;
+            transition-duration: 0.5s !important;
         }
         
         .container {
@@ -53,6 +74,52 @@
             font-weight: bold;
             text-align: center;
             text-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+            position: relative;
+        }
+        
+        /* ポイント増加アニメーション */
+        .points-display .point-gain {
+            position: absolute;
+            top: -10px;
+            right: -20px;
+            font-size: 0.7em;
+            color: #34d399;
+            font-weight: bold;
+            animation: point-float 1s ease-out;
+            text-shadow: 0 0 10px rgba(52, 211, 153, 0.8);
+        }
+        
+        @keyframes point-float {
+            0% {
+                opacity: 0;
+                transform: translateY(20px) scale(0.5);
+            }
+            30% {
+                opacity: 1;
+                transform: translateY(0) scale(1.2);
+            }
+            70% {
+                opacity: 1;
+                transform: translateY(-10px) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-30px) scale(0.8);
+            }
+        }
+        
+        .points-display.flash {
+            animation: point-flash 0.5s ease-out;
+        }
+        
+        @keyframes point-flash {
+            0%, 100% {
+                box-shadow: 0 4px 10px rgba(0,0,0,0.5), 0 0 20px rgba(59, 130, 246, 0.3);
+            }
+            50% {
+                box-shadow: 0 4px 20px rgba(52, 211, 153, 0.8), 0 0 40px rgba(52, 211, 153, 0.6);
+                border-color: #34d399;
+            }
         }
         
         /* メニューボタン */
@@ -776,8 +843,10 @@
                     <div style="font-size: 1.8em; color: #3b82f6; font-weight: bold; text-shadow: 0 0 15px rgba(59, 130, 246, 0.5);" id="totalPoints">0</div>
                 </div>
             </div>
-            <button onclick="goToMainMenu()" id="menuToMain">メニュー画面に戻る</button>
-            <button onclick="goToSubjectMenu()" id="menuToSubject">科目選択に戻る</button>
+            <button onclick="showUserInfo()" id="menuUserInfo">ユーザー情報</button>
+            <button onclick="showSettings()" id="menuSettings">詳細な設定</button>
+            <button onclick="goToMainMenu()" id="menuToMain">教科選択に戻る</button>
+            <button onclick="goToSubjectMenu()" id="menuToTopic">科目選択に戻る</button>
             <button onclick="skipQuestion()" id="menuSkip">この問題をスキップ</button>
             <div style="padding: 15px 20px; border-top: 2px solid #2d3561;">
                 <label style="display: flex; align-items: center; justify-content: space-between; cursor: pointer;">
@@ -826,6 +895,104 @@
                     <button class="result-button" onclick="retryQuiz()">もう一度</button>
                     <button class="result-button" onclick="goToMainMenu()">メニュー画面へ</button>
                 </div>
+            </div>
+        </div>
+        
+        <!-- ユーザー情報画面 -->
+        <div class="screen" id="userInfoScreen">
+            <h1>ユーザー情報</h1>
+            <div style="max-width: 800px; margin: 0 auto;">
+                
+                <!-- 統計情報 -->
+                <div style="background: linear-gradient(135deg, #0f1729 0%, #1a1f3a 100%); border: 2px solid #2d3561; border-radius: 15px; padding: 30px; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
+                    <h2 style="color: #3b82f6; margin-bottom: 20px; text-shadow: 0 0 10px rgba(59, 130, 246, 0.5);">📊 統計情報</h2>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+                        <div style="text-align: center; padding: 20px; background: rgba(59, 130, 246, 0.1); border-radius: 10px;">
+                            <div style="font-size: 0.9em; color: #60a5fa; margin-bottom: 10px;">総ポイント</div>
+                            <div style="font-size: 2.5em; color: #3b82f6; font-weight: bold; text-shadow: 0 0 15px rgba(59, 130, 246, 0.5);" id="userTotalPoints">0</div>
+                        </div>
+                        <div style="text-align: center; padding: 20px; background: rgba(59, 130, 246, 0.1); border-radius: 10px;">
+                            <div style="font-size: 0.9em; color: #60a5fa; margin-bottom: 10px;">解いた問題数</div>
+                            <div style="font-size: 2.5em; color: #3b82f6; font-weight: bold; text-shadow: 0 0 15px rgba(59, 130, 246, 0.5);" id="userTotalAnswered">0</div>
+                        </div>
+                        <div style="text-align: center; padding: 20px; background: rgba(59, 130, 246, 0.1); border-radius: 10px;">
+                            <div style="font-size: 0.9em; color: #60a5fa; margin-bottom: 10px;">正解率</div>
+                            <div style="font-size: 2.5em; color: #3b82f6; font-weight: bold; text-shadow: 0 0 15px rgba(59, 130, 246, 0.5);" id="userAccuracy">0%</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 問題ログ -->
+                <div style="background: linear-gradient(135deg, #0f1729 0%, #1a1f3a 100%); border: 2px solid #2d3561; border-radius: 15px; padding: 30px; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
+                    <h2 style="color: #3b82f6; margin-bottom: 20px; text-shadow: 0 0 10px rgba(59, 130, 246, 0.5);">📝 最近の履歴</h2>
+                    <div id="questionLog" style="max-height: 300px; overflow-y: auto;">
+                        <!-- ログがここに表示される -->
+                    </div>
+                </div>
+                
+                <!-- データ管理 -->
+                <div style="background: linear-gradient(135deg, #0f1729 0%, #1a1f3a 100%); border: 2px solid #2d3561; border-radius: 15px; padding: 30px; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
+                    <h2 style="color: #3b82f6; margin-bottom: 20px; text-shadow: 0 0 10px rgba(59, 130, 246, 0.5);">⚙️ データ管理</h2>
+                    <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                        <button class="result-button" onclick="clearAllData()" style="background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%); border-color: #ef4444;">全データをリセット</button>
+                        <button class="result-button" onclick="goToMainMenu()">メニュー画面へ戻る</button>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+        
+        <!-- 設定画面 -->
+        <div class="screen" id="settingsScreen">
+            <h1>⚙️ 詳細な設定</h1>
+            <div style="max-width: 800px; margin: 0 auto;">
+                
+                <!-- GUIアニメーション設定 -->
+                <div style="background: linear-gradient(135deg, #0f1729 0%, #1a1f3a 100%); border: 2px solid #2d3561; border-radius: 15px; padding: 30px; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
+                    <h2 style="color: #3b82f6; margin-bottom: 20px; text-shadow: 0 0 10px rgba(59, 130, 246, 0.5);">🎬 GUIアニメーション</h2>
+                    <p style="color: #60a5fa; margin-bottom: 15px;">アニメーションの品質を設定します</p>
+                    <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                        <button class="result-button" onclick="setAnimationQuality('low')" id="animLow">最低</button>
+                        <button class="result-button" onclick="setAnimationQuality('standard')" id="animStandard">標準</button>
+                        <button class="result-button" onclick="setAnimationQuality('high')" id="animHigh">最高</button>
+                    </div>
+                    <div style="margin-top: 15px; padding: 15px; background: rgba(59, 130, 246, 0.05); border-radius: 8px;">
+                        <p style="color: #60a5fa; font-size: 0.9em; margin: 0;">現在: <span id="currentAnim" style="color: #3b82f6; font-weight: bold;">標準</span></p>
+                    </div>
+                </div>
+                
+                <!-- GUIカラー設定 -->
+                <div style="background: linear-gradient(135deg, #0f1729 0%, #1a1f3a 100%); border: 2px solid #2d3561; border-radius: 15px; padding: 30px; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
+                    <h2 style="color: #3b82f6; margin-bottom: 20px; text-shadow: 0 0 10px rgba(59, 130, 246, 0.5);">🎨 GUIカラー</h2>
+                    <p style="color: #60a5fa; margin-bottom: 15px;">テーマカラーを変更します</p>
+                    <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                        <button class="result-button" onclick="setColorTheme('blue')" id="colorBlue">黒青</button>
+                        <button class="result-button" onclick="setColorTheme('red')" id="colorRed">黒赤</button>
+                        <button class="result-button" onclick="setColorTheme('mono')" id="colorMono">白黒</button>
+                    </div>
+                    <div style="margin-top: 15px; padding: 15px; background: rgba(59, 130, 246, 0.05); border-radius: 8px;">
+                        <p style="color: #60a5fa; font-size: 0.9em; margin: 0;">現在: <span id="currentColor" style="color: #3b82f6; font-weight: bold;">黒青</span></p>
+                    </div>
+                </div>
+                
+                <!-- 省GB設定 -->
+                <div style="background: linear-gradient(135deg, #0f1729 0%, #1a1f3a 100%); border: 2px solid #2d3561; border-radius: 15px; padding: 30px; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
+                    <h2 style="color: #3b82f6; margin-bottom: 20px; text-shadow: 0 0 10px rgba(59, 130, 246, 0.5);">💾 省GB設定</h2>
+                    <p style="color: #60a5fa; margin-bottom: 15px;">メモリ使用量を削減します（履歴を制限）</p>
+                    <label style="display: flex; align-items: center; gap: 15px; cursor: pointer; padding: 15px; background: rgba(59, 130, 246, 0.05); border-radius: 8px;">
+                        <div class="toggle-switch" onclick="toggleLowMemory(event)">
+                            <div class="toggle-slider" id="lowMemorySlider"></div>
+                        </div>
+                        <span style="color: #60a5fa; font-weight: bold;">省GB設定: <span id="lowMemoryStatus" style="color: #3b82f6;">OFF</span></span>
+                    </label>
+                    <p style="color: #60a5fa; font-size: 0.85em; margin-top: 10px;">ONにすると履歴が最新10件のみ保存されます</p>
+                </div>
+                
+                <!-- 戻るボタン -->
+                <div style="text-align: center;">
+                    <button class="result-button" onclick="goToMainMenu()">メニュー画面へ戻る</button>
+                </div>
+                
             </div>
         </div>
     </div>
@@ -1077,6 +1244,108 @@
         ],
         "correct": 0
       }
+    ],
+    "test2": [
+      {
+        "question": "As a ___, we didn't go to the amusement park, <結果として>",
+        "answers": [
+          "result",
+          "amount",
+          "one",
+          "front"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "The ___ ___ plastic waste is getting larger. <~の量>",
+        "answers": [
+          "result of",
+          "time out",
+          "amount of",
+          "in front"
+        ],
+        "correct": 2
+      },
+      {
+        "question": "The books were ____ to the class, <配布された>",
+        "answers": [
+          "distributed",
+          "cause",
+          "waste",
+          "cleanup"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "____ ____ , I met an old friend of mine, <ある日>",
+        "answers": [
+          "in front",
+          "raise rain",
+          "oneday",
+          "make difference"
+        ],
+        "correct": 2
+      },
+      {
+        "question": "A lot of Co2 ____ a ____ in our environment. <問題を引きおこす>",
+        "answers": [
+          "cause | problem",
+          "play | yes",
+          "make | lost",
+          "in | front"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "We have a beautiful bench ____ ____ of our house. <家の前に>",
+        "answers": [
+          "yes for",
+          "in front",
+          "raise yet",
+          "problem the"
+        ],
+        "correct": 1
+      },
+      {
+        "question": "Many sea turtles died ____ of swallowing the waste. <~原因で>",
+        "answers": [
+          "pollution",
+          "waste",
+          "attention",
+          "because"
+        ],
+        "correct": 3
+      },
+      {
+        "question": "You ahould ____ ____ abount plastic pollution. <意識を高める>",
+        "answers": [
+          "in front",
+          "raise awareness",
+          "make difference",
+          "go to"
+        ],
+        "correct": 2
+      },
+      {
+        "question": "We started the campaign to ____ a ____. <変化を持たらす>",
+        "answers": [
+          "make | difference",
+          "raise | start",
+          "in | front",
+          "goat | great"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "The campaign has gained ____ ____.<国際的な注目>",
+        "answers": [
+          "one day",
+          "deip hello",
+          "international attention",
+          "make yes"
+        ],
+        "correct": 2
+      }
     ]
   },
   "理科": {
@@ -1128,21 +1397,7 @@
   "工作": {
     "test": []
   },
-  "公共": {},
-  "遠藤": {
-    "endou": [
-      {
-        "question": "遠藤のしたことは？",
-        "answers": [
-          "学年一位",
-          "プロサッカー",
-          "黒板けし",
-          "汚物公開"
-        ],
-        "correct": 3
-      }
-    ]
-  }
+  "公共": {}
 };
         
         // 状態管理
@@ -1153,6 +1408,12 @@
         let totalQuestions = 0;
         let isMobileMode = false;
         let totalPoints = 0;
+        let questionLog = []; // 問題履歴
+        let totalAnswered = 0; // 解いた問題数
+        let totalCorrect = 0; // 正解した問題数
+        let animationQuality = 'standard'; // アニメーション品質
+        let colorTheme = 'blue'; // カラーテーマ
+        let lowMemoryMode = false; // 省GB設定
         
         // ポイントをローカルストレージから読み込み
         function loadPoints() {
@@ -1160,12 +1421,54 @@
             if (saved) {
                 totalPoints = parseInt(saved);
             }
+            
+            const logSaved = localStorage.getItem('questionLog');
+            if (logSaved) {
+                questionLog = JSON.parse(logSaved);
+            }
+            
+            const answeredSaved = localStorage.getItem('totalAnswered');
+            if (answeredSaved) {
+                totalAnswered = parseInt(answeredSaved);
+            }
+            
+            const correctSaved = localStorage.getItem('totalCorrect');
+            if (correctSaved) {
+                totalCorrect = parseInt(correctSaved);
+            }
+            
+            // 設定を読み込み
+            const animSaved = localStorage.getItem('animationQuality');
+            if (animSaved) {
+                animationQuality = animSaved;
+                applyAnimationQuality();
+            }
+            
+            const colorSaved = localStorage.getItem('colorTheme');
+            if (colorSaved) {
+                colorTheme = colorSaved;
+                applyColorTheme();
+            }
+            
+            const lowMemSaved = localStorage.getItem('lowMemoryMode');
+            if (lowMemSaved) {
+                lowMemoryMode = lowMemSaved === 'true';
+                applyLowMemoryMode();
+            }
+            
             updatePointsDisplay();
         }
         
         // ポイントを保存
         function savePoints() {
             localStorage.setItem('quizPoints', totalPoints.toString());
+            
+            // 省GB設定時は履歴を制限
+            const logToSave = lowMemoryMode ? questionLog.slice(0, 10) : questionLog;
+            localStorage.setItem('questionLog', JSON.stringify(logToSave));
+            
+            localStorage.setItem('totalAnswered', totalAnswered.toString());
+            localStorage.setItem('totalCorrect', totalCorrect.toString());
         }
         
         // ポイント表示を更新
@@ -1176,13 +1479,24 @@
         
         // ポイント獲得通知
         function showPointNotification(points) {
-            const notification = document.createElement('div');
-            notification.className = 'point-notification';
-            notification.textContent = `+${points} ポイント!`;
-            document.body.appendChild(notification);
+            // ポイント表示窓にアニメーション
+            const pointsDisplay = document.querySelector('.points-display');
+            const valueElement = document.getElementById('pointsDisplayValue');
+            
+            // フラッシュアニメーション
+            pointsDisplay.classList.add('flash');
+            setTimeout(() => {
+                pointsDisplay.classList.remove('flash');
+            }, 500);
+            
+            // 増加ポイント表示
+            const gainElement = document.createElement('div');
+            gainElement.className = 'point-gain';
+            gainElement.textContent = `+${points}`;
+            valueElement.parentElement.appendChild(gainElement);
             
             setTimeout(() => {
-                notification.remove();
+                gainElement.remove();
             }, 1000);
         }
         
@@ -1219,6 +1533,8 @@
                 button.onclick = () => selectTopic(topic);
                 topicList.appendChild(button);
             });
+            
+            updateMenuButtons();
         }
         
         // 科目選択
@@ -1271,12 +1587,37 @@
             
             // 正解判定とポイント加算
             let earnedPoints = 0;
-            if (answerIndex === question.correct) {
+            const isCorrect = answerIndex === question.correct;
+            
+            if (isCorrect) {
                 correctCount++;
+                totalCorrect++;
                 earnedPoints = 10; // 正解で10ポイント
                 totalPoints += earnedPoints;
-                savePoints();
-                updatePointsDisplay();
+            }
+            
+            // 履歴に記録
+            totalAnswered++;
+            const logEntry = {
+                timestamp: new Date().toISOString(),
+                subject: currentSubject,
+                topic: currentTopic,
+                question: question.question,
+                correct: isCorrect,
+                points: earnedPoints
+            };
+            questionLog.unshift(logEntry); // 最新を先頭に
+            
+            // ログの保持件数を設定に応じて制限
+            const maxLog = lowMemoryMode ? 10 : 50;
+            if (questionLog.length > maxLog) {
+                questionLog = questionLog.slice(0, maxLog);
+            }
+            
+            savePoints();
+            updatePointsDisplay();
+            
+            if (earnedPoints > 0) {
                 showPointNotification(earnedPoints);
             }
             
@@ -1409,33 +1750,47 @@
         function goToSubjectMenu() {
             if (currentSubject) {
                 selectSubject(currentSubject);
-                updateMenuButtons();
             }
         }
         
         // メニューボタンの表示制御
         function updateMenuButtons() {
             const activeScreen = document.querySelector('.screen.active').id;
+            const menuUserInfo = document.getElementById('menuUserInfo');
+            const menuSettings = document.getElementById('menuSettings');
             const menuToMain = document.getElementById('menuToMain');
-            const menuToSubject = document.getElementById('menuToSubject');
+            const menuToTopic = document.getElementById('menuToTopic');
             const menuSkip = document.getElementById('menuSkip');
+            
+            // ユーザー情報と設定ボタンは常に表示
+            menuUserInfo.style.display = 'block';
+            menuSettings.style.display = 'block';
             
             // 各画面でのボタンの表示/非表示を制御
             if (activeScreen === 'mainScreen') {
+                // 教科選択画面：何も表示しない
                 menuToMain.style.display = 'none';
-                menuToSubject.style.display = 'none';
+                menuToTopic.style.display = 'none';
                 menuSkip.style.display = 'none';
             } else if (activeScreen === 'topicScreen') {
+                // 科目選択画面：教科選択に戻るのみ
                 menuToMain.style.display = 'block';
-                menuToSubject.style.display = 'none';
+                menuToTopic.style.display = 'none';
                 menuSkip.style.display = 'none';
             } else if (activeScreen === 'quizScreen') {
+                // クイズ画面：すべて表示
                 menuToMain.style.display = 'block';
-                menuToSubject.style.display = 'block';
+                menuToTopic.style.display = 'block';
                 menuSkip.style.display = 'block';
             } else if (activeScreen === 'resultScreen') {
+                // 結果画面：教科選択と科目選択に戻る
                 menuToMain.style.display = 'block';
-                menuToSubject.style.display = 'block';
+                menuToTopic.style.display = 'block';
+                menuSkip.style.display = 'none';
+            } else if (activeScreen === 'userInfoScreen' || activeScreen === 'settingsScreen') {
+                // ユーザー情報・設定画面：メニューに戻るのみ
+                menuToMain.style.display = 'block';
+                menuToTopic.style.display = 'none';
                 menuSkip.style.display = 'none';
             }
         }
@@ -1480,6 +1835,166 @@
                 toggleSwitch.classList.remove("active");
                 modeLabel.textContent = "PC";
             }
+        }
+        
+        // ユーザー情報画面を表示
+        function showUserInfo() {
+            closeMenu();
+            showScreen("userInfoScreen");
+            updateUserInfoDisplay();
+        }
+        
+        // ユーザー情報を更新
+        function updateUserInfoDisplay() {
+            document.getElementById('userTotalPoints').textContent = totalPoints;
+            document.getElementById('userTotalAnswered').textContent = totalAnswered;
+            
+            const accuracy = totalAnswered > 0 ? Math.round((totalCorrect / totalAnswered) * 100) : 0;
+            document.getElementById('userAccuracy').textContent = accuracy + '%';
+            
+            // ログ表示
+            const logContainer = document.getElementById('questionLog');
+            logContainer.innerHTML = '';
+            
+            if (questionLog.length === 0) {
+                logContainer.innerHTML = '<div style="text-align: center; color: #60a5fa; padding: 20px;">まだ問題を解いていません</div>';
+            } else {
+                questionLog.forEach((entry, index) => {
+                    const date = new Date(entry.timestamp);
+                    const timeStr = date.toLocaleString('ja-JP');
+                    
+                    const logItem = document.createElement('div');
+                    logItem.style.cssText = `
+                        padding: 15px;
+                        margin-bottom: 10px;
+                        background: rgba(59, 130, 246, 0.05);
+                        border-left: 4px solid ${entry.correct ? '#34d399' : '#ef4444'};
+                        border-radius: 5px;
+                    `;
+                    
+                    logItem.innerHTML = `
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                            <span style="color: #60a5fa; font-weight: bold;">${entry.subject} - ${entry.topic}</span>
+                            <span style="color: ${entry.correct ? '#34d399' : '#ef4444'}; font-weight: bold;">
+                                ${entry.correct ? '正解 +' + entry.points + 'pt' : '不正解'}
+                            </span>
+                        </div>
+                        <div style="color: #93c5fd; margin-bottom: 5px;">${entry.question}</div>
+                        <div style="color: #60a5fa; font-size: 0.85em;">${timeStr}</div>
+                    `;
+                    
+                    logContainer.appendChild(logItem);
+                });
+            }
+        }
+        
+        // 全データをクリア
+        function clearAllData() {
+            if (confirm('本当に全てのデータ（ポイント、履歴）をリセットしますか？\nこの操作は取り消せません。')) {
+                localStorage.clear();
+                totalPoints = 0;
+                questionLog = [];
+                totalAnswered = 0;
+                totalCorrect = 0;
+                updatePointsDisplay();
+                updateUserInfoDisplay();
+                alert('全てのデータをリセットしました');
+            }
+        }
+        
+        // 設定画面を表示
+        function showSettings() {
+            closeMenu();
+            showScreen("settingsScreen");
+            updateSettingsDisplay();
+        }
+        
+        // 設定画面の表示を更新
+        function updateSettingsDisplay() {
+            // アニメーション品質ボタンのハイライト
+            document.getElementById('animLow').style.opacity = animationQuality === 'low' ? '1' : '0.6';
+            document.getElementById('animStandard').style.opacity = animationQuality === 'standard' ? '1' : '0.6';
+            document.getElementById('animHigh').style.opacity = animationQuality === 'high' ? '1' : '0.6';
+            
+            const animText = animationQuality === 'low' ? '最低' : animationQuality === 'high' ? '最高' : '標準';
+            document.getElementById('currentAnim').textContent = animText;
+            
+            // カラーテーマボタンのハイライト
+            document.getElementById('colorBlue').style.opacity = colorTheme === 'blue' ? '1' : '0.6';
+            document.getElementById('colorRed').style.opacity = colorTheme === 'red' ? '1' : '0.6';
+            document.getElementById('colorMono').style.opacity = colorTheme === 'mono' ? '1' : '0.6';
+            
+            const colorText = colorTheme === 'blue' ? '黒青' : colorTheme === 'red' ? '黒赤' : '白黒';
+            document.getElementById('currentColor').textContent = colorText;
+            
+            // 省GB設定
+            const slider = document.getElementById('lowMemorySlider');
+            const status = document.getElementById('lowMemoryStatus');
+            if (lowMemoryMode) {
+                slider.classList.add('active');
+                slider.parentElement.classList.add('active');
+                status.textContent = 'ON';
+            } else {
+                slider.classList.remove('active');
+                slider.parentElement.classList.remove('active');
+                status.textContent = 'OFF';
+            }
+        }
+        
+        // アニメーション品質を設定
+        function setAnimationQuality(quality) {
+            animationQuality = quality;
+            localStorage.setItem('animationQuality', quality);
+            applyAnimationQuality();
+            updateSettingsDisplay();
+        }
+        
+        // アニメーション品質を適用
+        function applyAnimationQuality() {
+            document.body.classList.remove('anim-low', 'anim-high');
+            if (animationQuality === 'low') {
+                document.body.classList.add('anim-low');
+            } else if (animationQuality === 'high') {
+                document.body.classList.add('anim-high');
+            }
+        }
+        
+        // カラーテーマを設定
+        function setColorTheme(theme) {
+            colorTheme = theme;
+            localStorage.setItem('colorTheme', theme);
+            applyColorTheme();
+            updateSettingsDisplay();
+        }
+        
+        // カラーテーマを適用
+        function applyColorTheme() {
+            document.body.classList.remove('theme-red', 'theme-mono');
+            if (colorTheme === 'red') {
+                document.body.classList.add('theme-red');
+            } else if (colorTheme === 'mono') {
+                document.body.classList.add('theme-mono');
+            }
+        }
+        
+        // 省GB設定を切り替え
+        function toggleLowMemory(event) {
+            event.stopPropagation();
+            lowMemoryMode = !lowMemoryMode;
+            localStorage.setItem('lowMemoryMode', lowMemoryMode.toString());
+            applyLowMemoryMode();
+            updateSettingsDisplay();
+            
+            // 既存のログも制限
+            if (lowMemoryMode && questionLog.length > 10) {
+                questionLog = questionLog.slice(0, 10);
+                savePoints();
+            }
+        }
+        
+        // 省GB設定を適用
+        function applyLowMemoryMode() {
+            // 現在は履歴の制限のみだが、将来的に他の最適化も追加可能
         }
         
         // 初期化実行
