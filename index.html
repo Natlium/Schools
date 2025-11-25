@@ -21,6 +21,16 @@
             overflow: hidden;
         }
         
+        /* 初期読み込み時の非表示 */
+        body:not(.loaded) .container {
+            opacity: 0;
+        }
+        
+        body.loaded .container {
+            opacity: 1;
+            transition: opacity 0.3s ease;
+        }
+        
         /* 背景アニメーション図形 */
         .bg-shapes {
             position: fixed;
@@ -36,17 +46,20 @@
         .shape {
             position: absolute;
             opacity: 0.1;
+            will-change: transform;
             animation: float linear infinite;
         }
         
         .shape.circle {
             border-radius: 50%;
             background: var(--shape-color, #3b82f6);
+            box-shadow: 0 0 20px var(--shape-color);
         }
         
         .shape.square {
             background: var(--shape-color, #3b82f6);
             transform: rotate(45deg);
+            box-shadow: 0 0 15px var(--shape-color);
         }
         
         .shape.triangle {
@@ -56,15 +69,70 @@
             border-left: 50px solid transparent;
             border-right: 50px solid transparent;
             border-bottom: 86px solid var(--shape-color, #3b82f6);
+            filter: drop-shadow(0 0 10px var(--shape-color));
         }
         
         @keyframes float {
             0% {
                 transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.15;
+            }
+            90% {
+                opacity: 0.15;
             }
             100% {
                 transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
             }
+        }
+        
+        @keyframes float-fast {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.2;
+            }
+            90% {
+                opacity: 0.2;
+            }
+            100% {
+                transform: translateY(-100px) rotate(1080deg);
+                opacity: 0;
+            }
+        }
+        
+        @keyframes float-spin {
+            0% {
+                transform: translateY(100vh) rotate(0deg) scale(1);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.25;
+            }
+            50% {
+                transform: translateY(50vh) rotate(720deg) scale(1.5);
+                opacity: 0.3;
+            }
+            90% {
+                opacity: 0.25;
+            }
+            100% {
+                transform: translateY(-100px) rotate(1440deg) scale(1);
+                opacity: 0;
+            }
+        }
+        
+        .shape.fast-rotate {
+            animation-name: float-fast;
+        }
+        
+        .shape.spin-crazy {
+            animation-name: float-spin;
         }
         
         .container {
@@ -73,7 +141,8 @@
         }
         
         /* カラーテーマ - 青 */
-        body.theme-blue {
+        body.theme-blue,
+        body:not(.theme-red):not(.theme-mono) {
             --primary-color: #3b82f6;
             --primary-light: #60a5fa;
             --primary-lighter: #93c5fd;
@@ -114,15 +183,108 @@
             background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
         }
         
-        /* アニメーション品質 */
-        body.anim-low * {
-            animation-duration: 0.1s !important;
-            transition-duration: 0.1s !important;
+        /* 最軽量モード */
+        body.ultra-light-mode {
+            background: #ffffff !important;
+            --primary-color: #000000 !important;
+            --primary-light: #333333 !important;
+            --primary-lighter: #666666 !important;
+            --primary-dark: #000000 !important;
+            --primary-darker: #000000 !important;
+            --border-color: #cccccc !important;
+            --bg-dark: #ffffff !important;
+            --bg-darker: #f5f5f5 !important;
+            --shape-color: #000000 !important;
         }
         
-        body.anim-high * {
-            animation-duration: 1s !important;
-            transition-duration: 0.5s !important;
+        body.ultra-light-mode * {
+            animation: none !important;
+            transition: none !important;
+            box-shadow: none !important;
+            text-shadow: none !important;
+        }
+        
+        body.ultra-light-mode .bg-shapes {
+            display: none !important;
+        }
+        
+        body.ultra-light-mode .screen {
+            background: #ffffff !important;
+            border: 1px solid #cccccc !important;
+        }
+        
+        /* ポイント表示の表示/非表示 */
+        .points-display.hidden {
+            display: none !important;
+        }
+        
+        /* 連続ログイン表示 */
+        .login-streak-display {
+            position: fixed;
+            top: 20px;
+            left: 180px;
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-darker) 100%);
+            border: 2px solid var(--primary-color);
+            border-radius: 15px;
+            padding: 15px 25px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5), 0 0 20px var(--primary-color);
+            z-index: 900;
+        }
+        
+        .login-streak-display.hidden {
+            display: none !important;
+        }
+        
+        .login-streak-display .label {
+            font-size: 0.8em;
+            color: var(--primary-light);
+            margin-bottom: 5px;
+            text-align: center;
+        }
+        
+        .login-streak-display .value {
+            font-size: 1.8em;
+            color: var(--primary-color);
+            font-weight: bold;
+            text-align: center;
+            text-shadow: 0 0 15px var(--primary-color);
+        }
+        
+        /* 正解・不正解アニメーション */
+        .answer-result-animation {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 8em;
+            z-index: 2000;
+            pointer-events: none;
+            animation: result-pop 0.8s ease-out;
+        }
+        
+        @keyframes result-pop {
+            0% {
+                transform: translate(-50%, -50%) scale(0);
+                opacity: 0;
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.2);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 0;
+            }
+        }
+        
+        .answer-result-animation.correct {
+            color: #34d399;
+            text-shadow: 0 0 30px #34d399;
+        }
+        
+        .answer-result-animation.incorrect {
+            color: #ef4444;
+            text-shadow: 0 0 30px #ef4444;
         }
         
         .container {
@@ -917,9 +1079,15 @@
         <div class="bg-shapes" id="bgShapes"></div>
         
         <!-- ポイント表示（左上） -->
-        <div class="points-display">
+        <div class="points-display" id="pointsDisplay">
             <div class="label">総ポイント</div>
             <div class="value" id="pointsDisplayValue">0</div>
+        </div>
+        
+        <!-- 連続ログイン表示（左上中央） -->
+        <div class="login-streak-display" id="loginStreakDisplay">
+            <div class="label">🔥 連続ログイン</div>
+            <div class="value" id="loginStreakValue">0日</div>
         </div>
         
         <!-- メニューボタン -->
@@ -1039,7 +1207,59 @@
         <!-- 設定画面 -->
         <div class="screen" id="settingsScreen">
             <h1>⚙️ 詳細な設定</h1>
-            <div style="max-width: 800px; margin: 0 auto;">
+            <div style="max-width: 900px; margin: 0 auto;">
+                
+                <!-- 最軽量モード -->
+                <div style="background: linear-gradient(135deg, #0f1729 0%, #1a1f3a 100%); border: 2px solid #2d3561; border-radius: 15px; padding: 30px; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
+                    <h2 style="color: #3b82f6; margin-bottom: 20px; text-shadow: 0 0 10px rgba(59, 130, 246, 0.5);">⚡ 最軽量モード</h2>
+                    <p style="color: #60a5fa; margin-bottom: 15px;">すべてのアニメーションと背景を無効化し、白黒表示にします</p>
+                    <label style="display: flex; align-items: center; gap: 15px; cursor: pointer; padding: 15px; background: rgba(59, 130, 246, 0.05); border-radius: 8px;">
+                        <div class="toggle-switch" onclick="toggleUltraLight(event)">
+                            <div class="toggle-slider" id="ultraLightSlider"></div>
+                        </div>
+                        <span style="color: #60a5fa; font-weight: bold;">最軽量モード: <span id="ultraLightStatus" style="color: #3b82f6;">OFF</span></span>
+                    </label>
+                </div>
+                
+                <!-- 正解・不正解アニメーション -->
+                <div style="background: linear-gradient(135deg, #0f1729 0%, #1a1f3a 100%); border: 2px solid #2d3561; border-radius: 15px; padding: 30px; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
+                    <h2 style="color: #3b82f6; margin-bottom: 20px; text-shadow: 0 0 10px rgba(59, 130, 246, 0.5);">✅ 回答アニメーション</h2>
+                    <p style="color: #60a5fa; margin-bottom: 15px;">正解時にチェックマーク、不正解時に×マークを表示します</p>
+                    <label style="display: flex; align-items: center; gap: 15px; cursor: pointer; padding: 15px; background: rgba(59, 130, 246, 0.05); border-radius: 8px;">
+                        <div class="toggle-switch" onclick="toggleAnswerAnimation(event)">
+                            <div class="toggle-slider" id="answerAnimSlider"></div>
+                        </div>
+                        <span style="color: #60a5fa; font-weight: bold;">回答アニメーション: <span id="answerAnimStatus" style="color: #3b82f6;">ON</span></span>
+                    </label>
+                </div>
+                
+                <!-- ポイント表示設定 -->
+                <div style="background: linear-gradient(135deg, #0f1729 0%, #1a1f3a 100%); border: 2px solid #2d3561; border-radius: 15px; padding: 30px; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
+                    <h2 style="color: #3b82f6; margin-bottom: 20px; text-shadow: 0 0 10px rgba(59, 130, 246, 0.5);">💎 ポイント表示</h2>
+                    <p style="color: #60a5fa; margin-bottom: 15px;">画面左上のポイント表示の表示/非表示を設定します</p>
+                    <label style="display: flex; align-items: center; gap: 15px; cursor: pointer; padding: 15px; background: rgba(59, 130, 246, 0.05); border-radius: 8px;">
+                        <div class="toggle-switch" onclick="togglePointsDisplay(event)">
+                            <div class="toggle-slider" id="pointsDispSlider"></div>
+                        </div>
+                        <span style="color: #60a5fa; font-weight: bold;">ポイント表示: <span id="pointsDispStatus" style="color: #3b82f6;">ON</span></span>
+                    </label>
+                </div>
+                
+                <!-- 連続ログイン表示設定 -->
+                <div style="background: linear-gradient(135deg, #0f1729 0%, #1a1f3a 100%); border: 2px solid #2d3561; border-radius: 15px; padding: 30px; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
+                    <h2 style="color: #3b82f6; margin-bottom: 20px; text-shadow: 0 0 10px rgba(59, 130, 246, 0.5);">🔥 連続ログイン表示</h2>
+                    <p style="color: #60a5fa; margin-bottom: 15px;">最大連続ログイン日数を画面左上に表示します</p>
+                    <label style="display: flex; align-items: center; gap: 15px; cursor: pointer; padding: 15px; background: rgba(59, 130, 246, 0.05); border-radius: 8px;">
+                        <div class="toggle-switch" onclick="toggleLoginStreak(event)">
+                            <div class="toggle-slider" id="loginStreakSlider"></div>
+                        </div>
+                        <span style="color: #60a5fa; font-weight: bold;">連続ログイン表示: <span id="loginStreakStatus" style="color: #3b82f6;">ON</span></span>
+                    </label>
+                    <div style="margin-top: 15px; padding: 15px; background: rgba(59, 130, 246, 0.05); border-radius: 8px;">
+                        <p style="color: #60a5fa; font-size: 0.9em; margin: 0;">現在の連続: <span id="currentStreak" style="color: #3b82f6; font-weight: bold;">0日</span></p>
+                        <p style="color: #60a5fa; font-size: 0.9em; margin: 5px 0 0 0;">最大記録: <span id="maxStreak" style="color: #3b82f6; font-weight: bold;">0日</span></p>
+                    </div>
+                </div>
                 
                 <!-- GUIアニメーション設定 -->
                 <div style="background: linear-gradient(135deg, #0f1729 0%, #1a1f3a 100%); border: 2px solid #2d3561; border-radius: 15px; padding: 30px; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
@@ -1857,6 +2077,24 @@
         let animationQuality = 'standard'; // アニメーション品質
         let colorTheme = 'blue'; // カラーテーマ
         let lowMemoryMode = false; // 省GB設定
+        let quizStartTime = 0; // クイズ開始時刻
+        let fastestTimes = {}; // 最速タイム記録
+        let wrongAnswers = []; // 間違えた問題の記録
+        let isRandomMode = false; // ランダムモードフラグ
+        let randomQuestions = []; // ランダム問題リスト
+        let ultraLightMode = false; // 最軽量モード
+        let answerAnimationEnabled = true; // 正解・不正解アニメーション
+        let pointsDisplayEnabled = true; // ポイント表示
+        let loginStreakEnabled = true; // 連続ログイン表示
+        let loginStreak = 0; // 現在の連続ログイン数
+        let maxLoginStreak = 0; // 最大連続ログイン数
+        let lastLoginDate = ''; // 最後のログイン日
+        let isOneMinuteChallenge = false; // 1分チャレンジモード
+        let oneMinuteTimer = null; // 1分チャレンジタイマー
+        let completionData = {}; // コンプリート進捗データ
+        let allAnimationEnabled = true; // 全アニメーション
+        let simpleColorMode = 'none'; // シンプルカラーモード (none/dark/light)
+        let currentNewGUI = 'default'; // 新GUI選択
         
         // ポイントをローカルストレージから読み込み
         function loadPoints() {
@@ -1880,17 +2118,20 @@
                 totalCorrect = parseInt(correctSaved);
             }
             
+            // 最速タイムを読み込み
+            const timesSaved = localStorage.getItem('fastestTimes');
+            if (timesSaved) {
+                fastestTimes = JSON.parse(timesSaved);
+            }
+            
+            // 連続ログインを確認・更新
+            checkLoginStreak();
+            
             // 設定を読み込み
             const animSaved = localStorage.getItem('animationQuality');
             if (animSaved) {
                 animationQuality = animSaved;
                 applyAnimationQuality();
-            }
-            
-            const colorSaved = localStorage.getItem('colorTheme');
-            if (colorSaved) {
-                colorTheme = colorSaved;
-                applyColorTheme();
             }
             
             const lowMemSaved = localStorage.getItem('lowMemoryMode');
@@ -1899,7 +2140,31 @@
                 applyLowMemoryMode();
             }
             
+            const ultraLightSaved = localStorage.getItem('ultraLightMode');
+            if (ultraLightSaved) {
+                ultraLightMode = ultraLightSaved === 'true';
+                applyUltraLightMode();
+            }
+            
+            const answerAnimSaved = localStorage.getItem('answerAnimationEnabled');
+            if (answerAnimSaved !== null) {
+                answerAnimationEnabled = answerAnimSaved === 'true';
+            }
+            
+            const pointsDispSaved = localStorage.getItem('pointsDisplayEnabled');
+            if (pointsDispSaved !== null) {
+                pointsDisplayEnabled = pointsDispSaved === 'true';
+                applyPointsDisplay();
+            }
+            
+            const loginStreakSaved = localStorage.getItem('loginStreakEnabled');
+            if (loginStreakSaved !== null) {
+                loginStreakEnabled = loginStreakSaved === 'true';
+                applyLoginStreakDisplay();
+            }
+            
             updatePointsDisplay();
+            updateLoginStreakDisplay();
         }
         
         // ポイントを保存
@@ -1912,12 +2177,59 @@
             
             localStorage.setItem('totalAnswered', totalAnswered.toString());
             localStorage.setItem('totalCorrect', totalCorrect.toString());
+            
+            // 最速タイムを保存
+            localStorage.setItem('fastestTimes', JSON.stringify(fastestTimes));
         }
         
         // ポイント表示を更新
         function updatePointsDisplay() {
             document.getElementById('totalPoints').textContent = totalPoints;
             document.getElementById('pointsDisplayValue').textContent = totalPoints;
+        }
+        
+        // 連続ログイン表示を更新
+        function updateLoginStreakDisplay() {
+            const streakValue = document.getElementById('loginStreakValue');
+            if (streakValue) {
+                streakValue.textContent = `${maxLoginStreak}日`;
+            }
+        }
+        
+        // 連続ログインをチェック
+        function checkLoginStreak() {
+            const today = new Date().toDateString();
+            const lastLogin = localStorage.getItem('lastLoginDate');
+            const savedStreak = localStorage.getItem('loginStreak');
+            const savedMaxStreak = localStorage.getItem('maxLoginStreak');
+            
+            if (savedStreak) loginStreak = parseInt(savedStreak);
+            if (savedMaxStreak) maxLoginStreak = parseInt(savedMaxStreak);
+            
+            if (lastLogin === today) {
+                // 今日既にログイン済み
+                return;
+            }
+            
+            const yesterday = new Date();
+            yesterday.setDate(yesterday.getDate() - 1);
+            const yesterdayStr = yesterday.toDateString();
+            
+            if (lastLogin === yesterdayStr) {
+                // 連続ログイン
+                loginStreak++;
+            } else if (lastLogin !== today) {
+                // 途切れた
+                loginStreak = 1;
+            }
+            
+            if (loginStreak > maxLoginStreak) {
+                maxLoginStreak = loginStreak;
+            }
+            
+            localStorage.setItem('lastLoginDate', today);
+            localStorage.setItem('loginStreak', loginStreak.toString());
+            localStorage.setItem('maxLoginStreak', maxLoginStreak.toString());
         }
         
         // ポイント獲得通知
@@ -1943,8 +2255,31 @@
             }, 1000);
         }
         
+        // 正解・不正解アニメーション表示
+        function showAnswerAnimation(isCorrect) {
+            if (!answerAnimationEnabled) return;
+            
+            const animation = document.createElement('div');
+            animation.className = `answer-result-animation ${isCorrect ? 'correct' : 'incorrect'}`;
+            animation.textContent = isCorrect ? '✓' : '✗';
+            document.body.appendChild(animation);
+            
+            setTimeout(() => {
+                animation.remove();
+            }, 800);
+        }
+        
         // 初期化
         function init() {
+            // テーマを先に適用
+            const colorSaved = localStorage.getItem('colorTheme');
+            if (colorSaved) {
+                colorTheme = colorSaved;
+            } else {
+                colorTheme = 'blue'; // デフォルトを明示的に設定
+            }
+            applyColorTheme();
+            
             const subjectList = document.getElementById("subjectList");
             subjectList.innerHTML = "";
             
@@ -1959,24 +2294,55 @@
             loadPoints();
             updateMenuButtons();
             initBackgroundShapes();
+            
+            // 初期化完了後に表示
+            setTimeout(() => {
+                document.body.classList.add('loaded');
+            }, 100);
         }
         
         // 背景図形アニメーション初期化
         function initBackgroundShapes() {
             const bgShapes = document.getElementById('bgShapes');
             const shapeTypes = ['circle', 'square', 'triangle'];
-            const shapeCount = 15;
+            const shapeCount = 40;
             
             for (let i = 0; i < shapeCount; i++) {
                 const shape = document.createElement('div');
-                shape.className = `shape ${shapeTypes[Math.floor(Math.random() * shapeTypes.length)]}`;
+                const shapeType = shapeTypes[Math.floor(Math.random() * shapeTypes.length)];
+                shape.className = `shape ${shapeType}`;
                 
-                const size = Math.random() * 60 + 30;
+                // ランダムで特殊アニメーション（16%の確率）
+                const specialRandom = Math.random();
+                if (specialRandom < 0.08) {
+                    shape.classList.add('fast-rotate'); // 8%で高速回転
+                } else if (specialRandom < 0.16) {
+                    shape.classList.add('spin-crazy'); // 8%で超高速スピン
+                }
+                
+                // サイズのバリエーション
+                const size = Math.random() * 90 + 20; // 20px-110px
+                
                 shape.style.width = size + 'px';
                 shape.style.height = size + 'px';
-                shape.style.left = Math.random() * 100 + '%';
-                shape.style.animationDuration = (Math.random() * 15 + 10) + 's';
-                shape.style.animationDelay = Math.random() * 5 + 's';
+                
+                // 横位置をランダムに
+                shape.style.left = (Math.random() * 120 - 10) + '%';
+                
+                // 特殊アニメーションの場合は速度を調整
+                if (shape.classList.contains('fast-rotate')) {
+                    shape.style.animationDuration = (Math.random() * 4 + 4) + 's'; // 4-8秒
+                } else if (shape.classList.contains('spin-crazy')) {
+                    shape.style.animationDuration = (Math.random() * 3 + 3) + 's'; // 3-6秒
+                } else {
+                    shape.style.animationDuration = (Math.random() * 20 + 15) + 's'; // 15-35秒
+                }
+                
+                // 開始位置もランダムに
+                shape.style.animationDelay = (Math.random() * 12 - 6) + 's';
+                
+                // GPU アクセラレーションを有効化
+                shape.style.transform = 'translateZ(0)';
                 
                 bgShapes.appendChild(shape);
             }
@@ -1985,16 +2351,35 @@
         // 教科選択
         function selectSubject(subject) {
             currentSubject = subject;
+            isRandomMode = false;
             showScreen("topicScreen");
             
             document.getElementById("topicTitle").textContent = subject + " - 科目選択";
             const topicList = document.getElementById("topicList");
             topicList.innerHTML = "";
             
+            // ランダム問題ボタンを追加
+            const randomButton = document.createElement("button");
+            randomButton.className = "main-button";
+            randomButton.style.background = "linear-gradient(135deg, #f59e0b 0%, #d97706 100%)";
+            randomButton.style.borderColor = "#fbbf24";
+            randomButton.textContent = "🎲 ランダム問題";
+            randomButton.onclick = () => startRandomQuiz(subject);
+            topicList.appendChild(randomButton);
+            
             Object.keys(quizData[subject]).forEach(topic => {
                 const button = document.createElement("button");
                 button.className = "main-button";
-                button.textContent = topic;
+                
+                // 最速タイム表示
+                const key = `${subject}-${topic}`;
+                const fastestTime = fastestTimes[key];
+                let displayText = topic;
+                if (fastestTime) {
+                    displayText += ` ⏱️ ${formatTime(fastestTime)}`;
+                }
+                
+                button.textContent = displayText;
                 button.onclick = () => selectTopic(topic);
                 topicList.appendChild(button);
             });
@@ -2007,16 +2392,68 @@
             currentTopic = topic;
             currentQuestionIndex = 0;
             correctCount = 0;
+            wrongAnswers = [];
+            isRandomMode = false;
             totalQuestions = quizData[currentSubject][currentTopic].length;
+            quizStartTime = Date.now();
             
             showScreen("quizScreen");
             updateMenuButtons();
             showQuestion();
         }
         
+        // ランダム問題開始
+        function startRandomQuiz(subject) {
+            isRandomMode = true;
+            currentSubject = subject;
+            currentTopic = "ランダム";
+            currentQuestionIndex = 0;
+            correctCount = 0;
+            wrongAnswers = [];
+            
+            // 全科目から問題を集める
+            randomQuestions = [];
+            Object.keys(quizData[subject]).forEach(topic => {
+                quizData[subject][topic].forEach(q => {
+                    randomQuestions.push({
+                        ...q,
+                        originalTopic: topic
+                    });
+                });
+            });
+            
+            // シャッフル
+            randomQuestions = shuffleArray(randomQuestions);
+            totalQuestions = Math.min(randomQuestions.length, 20); // 最大20問
+            randomQuestions = randomQuestions.slice(0, totalQuestions);
+            
+            quizStartTime = Date.now();
+            showScreen("quizScreen");
+            updateMenuButtons();
+            showQuestion();
+        }
+        
+        // 配列をシャッフル
+        function shuffleArray(array) {
+            const newArray = [...array];
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
+        }
+        
+        // 時間をフォーマット
+        function formatTime(ms) {
+            const seconds = Math.floor(ms / 1000);
+            const minutes = Math.floor(seconds / 60);
+            const remainingSeconds = seconds % 60;
+            return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+        }
+        
         // 問題表示
         function showQuestion() {
-            const questions = quizData[currentSubject][currentTopic];
+            const questions = isRandomMode ? randomQuestions : quizData[currentSubject][currentTopic];
             
             if (currentQuestionIndex >= questions.length) {
                 showResult();
@@ -2032,33 +2469,60 @@
             const answerArea = document.getElementById("answerArea");
             answerArea.innerHTML = "";
             
-            question.answers.forEach((answer, index) => {
+            // 回答をシャッフル
+            const shuffledAnswers = question.answers.map((answer, index) => ({
+                text: answer,
+                originalIndex: index
+            }));
+            
+            // Fisher-Yatesアルゴリズムでシャッフル
+            for (let i = shuffledAnswers.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffledAnswers[i], shuffledAnswers[j]] = [shuffledAnswers[j], shuffledAnswers[i]];
+            }
+            
+            shuffledAnswers.forEach((item) => {
                 const button = document.createElement("button");
                 button.className = "answer-button";
-                button.textContent = answer;
-                button.onclick = () => selectAnswer(index);
+                button.textContent = item.text;
+                button.onclick = () => selectAnswer(item.originalIndex, question);
                 answerArea.appendChild(button);
             });
         }
         
         // 回答選択
-        function selectAnswer(answerIndex) {
-            const questions = quizData[currentSubject][currentTopic];
-            const question = questions[currentQuestionIndex];
+        function selectAnswer(answerIndex, question) {
+            const questions = isRandomMode ? randomQuestions : quizData[currentSubject][currentTopic];
+            if (!question) question = questions[currentQuestionIndex];
             
             // クリックアニメーション
             const buttons = document.querySelectorAll('.answer-button');
-            buttons[answerIndex].classList.add('clicked');
+            buttons.forEach(btn => {
+                if (btn.textContent === question.answers[answerIndex]) {
+                    btn.classList.add('clicked');
+                }
+            });
             
             // 正解判定とポイント加算
             let earnedPoints = 0;
             const isCorrect = answerIndex === question.correct;
             
+            // 正解・不正解アニメーション表示
+            showAnswerAnimation(isCorrect);
+            
             if (isCorrect) {
                 correctCount++;
                 totalCorrect++;
-                earnedPoints = 10; // 正解で10ポイント
+                earnedPoints = 10;
                 totalPoints += earnedPoints;
+            } else {
+                // 間違えた問題を記録
+                wrongAnswers.push({
+                    question: question.question,
+                    userAnswer: question.answers[answerIndex],
+                    correctAnswer: question.answers[question.correct],
+                    topic: isRandomMode ? question.originalTopic : currentTopic
+                });
             }
             
             // 履歴に記録
@@ -2066,14 +2530,13 @@
             const logEntry = {
                 timestamp: new Date().toISOString(),
                 subject: currentSubject,
-                topic: currentTopic,
+                topic: isRandomMode ? "ランダム" : currentTopic,
                 question: question.question,
                 correct: isCorrect,
                 points: earnedPoints
             };
-            questionLog.unshift(logEntry); // 最新を先頭に
+            questionLog.unshift(logEntry);
             
-            // ログの保持件数を設定に応じて制限
             const maxLog = lowMemoryMode ? 10 : 50;
             if (questionLog.length > maxLog) {
                 questionLog = questionLog.slice(0, maxLog);
@@ -2090,7 +2553,7 @@
             setTimeout(() => {
                 currentQuestionIndex++;
                 showQuestion();
-            }, earnedPoints > 0 ? 1000 : 400); // 正解時は少し長く待つ
+            }, earnedPoints > 0 ? 1000 : 400);
         }
         
         // 問題スキップ
@@ -2105,16 +2568,28 @@
             showScreen("resultScreen");
             updateMenuButtons();
             
+            // クリアタイム計算
+            const clearTime = Date.now() - quizStartTime;
+            const key = `${currentSubject}-${currentTopic}`;
+            
+            // 最速タイム更新チェック（ランダムモードは除外）
+            let isNewRecord = false;
+            if (!isRandomMode && (!fastestTimes[key] || clearTime < fastestTimes[key])) {
+                fastestTimes[key] = clearTime;
+                isNewRecord = true;
+                savePoints();
+            }
+            
             // ボーナスポイント計算
             const percentage = Math.round((correctCount / totalQuestions) * 100);
             let bonusPoints = 0;
             
             if (percentage === 100) {
-                bonusPoints = 50; // 完璧ボーナス
+                bonusPoints = 50;
             } else if (percentage >= 80) {
-                bonusPoints = 30; // 優秀ボーナス
+                bonusPoints = 30;
             } else if (percentage >= 60) {
-                bonusPoints = 10; // 合格ボーナス
+                bonusPoints = 10;
             }
             
             if (bonusPoints > 0) {
@@ -2122,7 +2597,6 @@
                 savePoints();
                 updatePointsDisplay();
                 
-                // ボーナスポイント通知は少し遅らせる
                 setTimeout(() => {
                     showPointNotification(bonusPoints + ' ボーナス');
                 }, 500);
@@ -2136,7 +2610,6 @@
             
             if (percentage === 100) {
                 message = "完璧です！";
-                // 花火アニメーション
                 animationHTML = `
                     <div class="firework">
                         <div class="firework-particle"></div>
@@ -2151,7 +2624,6 @@
                 `;
             } else if (percentage >= 80) {
                 message = "素晴らしい！";
-                // 星アニメーション
                 animationHTML = `
                     <div class="stars">
                         <div class="star"></div>
@@ -2163,7 +2635,6 @@
                 `;
             } else if (percentage >= 60) {
                 message = "良くできました！";
-                // サムズアップアニメーション
                 animationHTML = `
                     <div class="thumbs-up">
                         <div class="thumb"></div>
@@ -2171,7 +2642,6 @@
                 `;
             } else {
                 message = "もう少し頑張りましょう！";
-                // 筋肉アニメーション
                 animationHTML = `
                     <div class="muscle">
                         <div class="arm">
@@ -2182,13 +2652,40 @@
             }
             
             document.getElementById("resultAnimation").innerHTML = animationHTML;
-            document.getElementById("resultMessage").textContent = message;
+            
+            // メッセージにタイムと新記録を追加
+            let displayMessage = message;
+            displayMessage += `<br><span style="font-size: 0.6em;">⏱️ クリアタイム: ${formatTime(clearTime)}</span>`;
+            if (isNewRecord && !isRandomMode) {
+                displayMessage += `<br><span style="font-size: 0.5em; color: #fbbf24;">🏆 NEW RECORD!</span>`;
+            }
+            
+            // 間違えた問題の表示
+            if (wrongAnswers.length > 0) {
+                displayMessage += `<br><br><div style="font-size: 0.4em; text-align: left; max-width: 600px; margin: 20px auto;">`;
+                displayMessage += `<strong>❌ 間違えた問題:</strong><br>`;
+                wrongAnswers.forEach((item, index) => {
+                    displayMessage += `<div style="margin: 10px 0; padding: 10px; background: rgba(239, 68, 68, 0.1); border-left: 3px solid #ef4444; border-radius: 5px;">`;
+                    displayMessage += `<strong>Q${index + 1}:</strong> ${item.question}<br>`;
+                    displayMessage += `<span style="color: #ef4444;">あなたの回答: ${item.userAnswer}</span><br>`;
+                    displayMessage += `<span style="color: #34d399;">正解: ${item.correctAnswer}</span>`;
+                    if (item.topic) {
+                        displayMessage += `<br><span style="color: var(--primary-light); font-size: 0.9em;">(${item.topic})</span>`;
+                    }
+                    displayMessage += `</div>`;
+                });
+                displayMessage += `</div>`;
+            }
+            
+            document.getElementById("resultMessage").innerHTML = displayMessage;
         }
         
         // もう一度
         function retryQuiz() {
             currentQuestionIndex = 0;
             correctCount = 0;
+            wrongAnswers = [];
+            quizStartTime = Date.now();
             showScreen("quizScreen");
             updateMenuButtons();
             showQuestion();
@@ -2393,9 +2890,30 @@
             document.getElementById('currentColor').textContent = colorText;
             
             // 省GB設定
-            const slider = document.getElementById('lowMemorySlider');
-            const status = document.getElementById('lowMemoryStatus');
-            if (lowMemoryMode) {
+            updateToggle('lowMemorySlider', 'lowMemoryStatus', lowMemoryMode);
+            
+            // 最軽量モード
+            updateToggle('ultraLightSlider', 'ultraLightStatus', ultraLightMode);
+            
+            // 回答アニメーション
+            updateToggle('answerAnimSlider', 'answerAnimStatus', answerAnimationEnabled);
+            
+            // ポイント表示
+            updateToggle('pointsDispSlider', 'pointsDispStatus', pointsDisplayEnabled);
+            
+            // 連続ログイン表示
+            updateToggle('loginStreakSlider', 'loginStreakStatus', loginStreakEnabled);
+            
+            // 連続ログイン統計
+            document.getElementById('currentStreak').textContent = `${loginStreak}日`;
+            document.getElementById('maxStreak').textContent = `${maxLoginStreak}日`;
+        }
+        
+        // トグルスイッチの表示を更新
+        function updateToggle(sliderId, statusId, isActive) {
+            const slider = document.getElementById(sliderId);
+            const status = document.getElementById(statusId);
+            if (isActive) {
                 slider.classList.add('active');
                 slider.parentElement.classList.add('active');
                 status.textContent = 'ON';
@@ -2403,6 +2921,70 @@
                 slider.classList.remove('active');
                 slider.parentElement.classList.remove('active');
                 status.textContent = 'OFF';
+            }
+        }
+        
+        // 最軽量モード切り替え
+        function toggleUltraLight(event) {
+            event.stopPropagation();
+            ultraLightMode = !ultraLightMode;
+            localStorage.setItem('ultraLightMode', ultraLightMode.toString());
+            applyUltraLightMode();
+            updateSettingsDisplay();
+        }
+        
+        // 最軽量モード適用
+        function applyUltraLightMode() {
+            if (ultraLightMode) {
+                document.body.classList.add('ultra-light-mode');
+            } else {
+                document.body.classList.remove('ultra-light-mode');
+            }
+        }
+        
+        // 回答アニメーション切り替え
+        function toggleAnswerAnimation(event) {
+            event.stopPropagation();
+            answerAnimationEnabled = !answerAnimationEnabled;
+            localStorage.setItem('answerAnimationEnabled', answerAnimationEnabled.toString());
+            updateSettingsDisplay();
+        }
+        
+        // ポイント表示切り替え
+        function togglePointsDisplay(event) {
+            event.stopPropagation();
+            pointsDisplayEnabled = !pointsDisplayEnabled;
+            localStorage.setItem('pointsDisplayEnabled', pointsDisplayEnabled.toString());
+            applyPointsDisplay();
+            updateSettingsDisplay();
+        }
+        
+        // ポイント表示適用
+        function applyPointsDisplay() {
+            const pointsDisplay = document.getElementById('pointsDisplay');
+            if (pointsDisplayEnabled) {
+                pointsDisplay.classList.remove('hidden');
+            } else {
+                pointsDisplay.classList.add('hidden');
+            }
+        }
+        
+        // 連続ログイン表示切り替え
+        function toggleLoginStreak(event) {
+            event.stopPropagation();
+            loginStreakEnabled = !loginStreakEnabled;
+            localStorage.setItem('loginStreakEnabled', loginStreakEnabled.toString());
+            applyLoginStreakDisplay();
+            updateSettingsDisplay();
+        }
+        
+        // 連続ログイン表示適用
+        function applyLoginStreakDisplay() {
+            const loginStreakDisplay = document.getElementById('loginStreakDisplay');
+            if (loginStreakEnabled) {
+                loginStreakDisplay.classList.remove('hidden');
+            } else {
+                loginStreakDisplay.classList.add('hidden');
             }
         }
         
